@@ -7,7 +7,6 @@
     $lastName = $inData["lastName"];
     $login = $inData["login"];
     $password = $inData["password"];
-    $regPasswordConf = $inData["regPasswordConf"];
 
     $conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331");
     if( $conn->connect_error )
@@ -23,10 +22,6 @@
         if($result->num_rows > 0)
         {
             returnWithError("Username Already Exists");
-        }
-        elseif($password != $regPasswordConf)
-        {
-            returnWithError("Passwords Do Not Match");
         }
         else
         {
