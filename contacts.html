@@ -1,0 +1,64 @@
+<html>
+<head>
+	<title>Contact CEOy</title>
+	<script type="text/javascript" src="js/code.js"></script>
+    <link href="css/styles.css" rel="stylesheet">	
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link rel="stylesheet" href="contacts.css">
+	
+	<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function() 
+	{
+		readCookie();
+	}, false);
+	</script>
+	
+    <div class="logout" id="loggedInDiv">
+        <span id="userName"></span><br />
+        <button type="button" id="logoutButton" class="logoutButton" onclick="doLogout();"> Logout </button>
+    </div>
+    
+    <div class="topNav">
+        <a class="addContact" href="#addContact">Add Contacts</a>
+        <input type="text" id="searchBar" onkeyup="doReadContacts();" placeholder="Search...">
+        <!--Create JS function for onclick to toggle form--hidden in add contact form-->
+    </div>
+
+</head>
+<body>
+
+<div class="container" id="accessUIDiv">
+    <form class="form " id="add">
+        <h1 class="form__title">Add a Contact</h1>
+        <div class="form__message form__message--error"></div>
+        <!--add contact first name-->
+        <div class="form__input-group">
+            <input type="text" id="addFirstName" class="form__input" autofocus placeholder="First Name">
+            <div class="form__input-error-message"></div>
+        </div>
+        <!--add contact last name-->
+        <div class="form__input-group">
+            <input type="text" id="addLastName" class="form__input" autofocus placeholder="Last Name">
+            <div class="form__input-error-message"></div>
+        </div>
+        <!--add contact email-->
+        <div class="form__input-group">
+            <input type="text" id="addEmail" class="form__input" autofocus placeholder="Email">
+            <div class="form__input-error-message"></div>
+        </div>
+        <!--add contact phone number-->
+        <div class="form__input-group">
+            <input type="text" id="addPhone" class="form__input" autofocus placeholder="Phone Number">
+            <div class="form__input-error-message"></div>
+        </div>
+        <!--add contact button-->
+        <button type="button" id="addContactButton" class="buttons" onclick="addContact();">Add Contact</button>
+    </form>
+</div>
+
+<div class="contactList" id="contactList">
+
+</div>
+
+</body>
+</html>
