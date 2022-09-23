@@ -19,8 +19,13 @@
 		$stmt->execute();
 		$result = $stmt->get_result();
 
-		if( $row = $result->fetch_assoc()  )
+		if( $row = $result->fetch_assoc() )
 		{
+			$dateTime = date("Y-m-d H:i:s");
+			$stmt2 = $conn->prepare("UPDATE users SET dateLastLoggedIn=? WHERE ID=?");
+			$stmt2->bind_param("ss", $dateTime, $row['ID']);
+			$stmt2->execute();
+
 			returnWithInfo( $row['firstName'], $row['lastName'], $row['ID'] );
 		}
 		else
@@ -29,6 +34,7 @@
 		}
 
 		$stmt->close();
+		$stmt2->clone();
 		$conn->close();
 	}
 	

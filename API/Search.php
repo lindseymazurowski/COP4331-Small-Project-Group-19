@@ -26,6 +26,12 @@
 			}
 			$searchCount++;
 			$searchResults .= json_encode($row);
+
+			$dateTime = date("Y-m-d H:i:s");
+			$stmt2 = $conn->prepare("UPDATE contacts SET dateLastAccessed=? WHERE ID=?");
+			$stmt2->bind_param("ss", $dateTime, $row['ID']);
+			$stmt2->execute();
+			$stmt2->close();
 		}
 		
 		if( $searchCount == 0 )
