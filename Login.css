@@ -81,7 +81,7 @@ body{
     color: var(--color-error);
 }
 
-.form__button{
+.buttons{
     width: 100%;
     padding: 1rem 2rem;
     font-weight: bold;

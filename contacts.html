@@ -1,34 +1,128 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<title>Contact CEOy</title>
-	<script type="text/javascript" src="js/code.js"></script>
-    <link href="css/styles.css" rel="stylesheet">	
-    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
-    <link rel="stylesheet" href="contacts.css">
-	
-	<script type="text/javascript">
-	document.addEventListener('DOMContentLoaded', function() 
-	{
-		readCookie();
-	}, false);
-	</script>
-	
-    <div class="logout" id="loggedInDiv">
-        <span id="userName"></span><br />
-        <button type="button" id="logoutButton" class="logoutButton" onclick="doLogout();"> Logout </button>
-    </div>
-    
-    <div class="topNav">
-        <a class="addContact" href="#addContact">Add Contacts</a>
-        <input type="text" id="searchBar" onkeyup="doReadContacts();" placeholder="Search...">
-        <!--Create JS function for onclick to toggle form--hidden in add contact form-->
-    </div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width-device-width, initial-scale=1.0">
 
+    <meta name="author" content="COP4331 Small Project Group 19 Fall 2022">
+
+    <link rel="stylesheet" type="text/css" href="./contacts.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
+    <script type="text/javascript" src="./Login.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() 
+        {
+            readCookie();
+        }, false);
+        </script>
+    <title>Contact Manager Group 19</title>
 </head>
-<body>
+    <style>
+        .header {
+            top: 0;
+            overflow: hidden;
+            background-color: #125649;
+            background-image: url(./ban5.webp);
+            width: 100%;
+            height: 20%;
+        }
+        .header-left {
+            float: left;
+            padding: 14px 16px;
+        }
+        .header-right {
+            float: right;
+            padding: 14px 16px;
+        }
+        
+        .button2:hover {
+            background-color: #eeeeee;
+            color: #025e4d;
+        }
+        .input {
+            width: 50%;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #dddddd;
+            outline: none;
+            background: #eeeeee;
+            transition: 0.2s, border-color 0.2s; 
+        }
+        .input:focus {
+            border-color: var(--color-primary);
+            background: #ffffff;
+        }
+        
+        table {
+            z-index: 0;
+            position: relative;
+            border-collapse: collapse;
+            width: 83%;
+            max-height: 650px;
+            margin-left: 8%;
+        }
 
-<div class="container" id="accessUIDiv">
-    <form class="form " id="add">
+        tbody{
+            max-height: 500px;
+            overflow-y: auto;
+            
+        }
+
+        th{
+            position: sticky;
+            background-color: #01b493;
+            font: 500 1rem 'Roboto', sans-serif;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        th, td {
+            z-index: 0;
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #DDD;
+        }
+
+        td{
+            background-color: rgb(207, 249, 235);
+        }
+        
+        tr:hover {
+            background-color: #D6EEEE;
+        }
+
+        
+    </style>
+
+<body onload="doWelcome(); doSearch();" style="padding: 0; display: block;">
+    <div class="header" align="center" style="position: absolute; z-index: 25;">
+        <div class="header-right">
+            <!--Logout button-->
+            <div class="logout" id="loggedInDiv">
+                <button type="button" id="logoutButton" class="button2" onclick="doLogout();">Log Out</button>
+            </div>
+        </div>
+
+        <div class="header-left" align="left">
+            <!--Search bar and add contact button-->
+            <div class="topNav">
+                <button type="button" id="openAddButton" class="button2" onclick="openAddContact();">Add Contact</button>
+                <br>
+                <br>
+                <input type="text" id="searchBar" class="input" placeholder="Search for Contact..." onkeyup="doSearch(true)" style="width: 100%;">
+                <div>
+                    <span id="searchContactResult"></span>
+                </div>  
+            </div>
+        </div>
+
+        <div class="container" id="banner" onload="doWelcome();" style="background-color: white; font-size: xx-large;">
+        </div>
+
+    </div>
+<div class="container form--hidden" id="accessUIDiv" style="position: fixed; z-index: 35; left: 50%; transform: translateX(-50%);">
+    <!--Add contact form-->
+    <form class="form form--hidden" id="addContactForm" >
         <h1 class="form__title">Add a Contact</h1>
         <div class="form__message form__message--error"></div>
         <!--add contact first name-->
@@ -52,13 +146,60 @@
             <div class="form__input-error-message"></div>
         </div>
         <!--add contact button-->
-        <button type="button" id="addContactButton" class="buttons" onclick="addContact();">Add Contact</button>
+        <button type="button" id="addContactButton" class="buttons" onclick="doAddContact();">Add Contact</button>
+        <button type="button" id="closeAddContactButton" class="cancelButtons" onclick="closeAddContact();">Cancel</button>
+        <span id="addContactResult"></span>
+    </form>
+
+    <!--Edit Contact Form-->
+    <form class="form form--hidden" id="editContactForm">
+        <h1 class="form__title">Edit a Contact</h1>
+        <div class="form__message form__message--error"></div>
+        <!--edit contact first name-->
+        <div class="form__input-group">
+            <input type="text" id="editFirstName" class="form__input" autofocus placeholder="First Name">
+            <div class="form__input-error-message"></div>
+        </div>
+        <!--edit contact last name-->
+        <div class="form__input-group">
+            <input type="text" id="editLastName" class="form__input" autofocus placeholder="Last Name">
+            <div class="form__input-error-message"></div>
+        </div>
+        <!--edit contact email-->
+        <div class="form__input-group">
+            <input type="text" id="editEmail" class="form__input" autofocus placeholder="Email">
+            <div class="form__input-error-message"></div>
+        </div>
+        <!--edit contact phone number-->
+        <div class="form__input-group">
+            <input type="text" id="editPhone" class="form__input" autofocus placeholder="Phone Number">
+            <div class="form__input-error-message"></div>
+        </div>
+        <!--edit contact button-->
+        <button type="button" id="editContactButton" class="buttons" onclick="doEditContact();">Edit Contact</button>
+        <button type="button" id="closeEditContactButton" class="cancelButtons" onclick="closeEditContact();">Cancel</button>
+        <span id="editContactResult"></span>
     </form>
 </div>
 
-<div class="contactList" id="contactList">
+<div class="contactList" id="contactList" onscroll="lazyload()">
+    <table id="contactTable">
+       <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Options</th>
+            </tr>
+       </thead> 
+       <tbody>
 
+       </tbody>
+    </table>
+
+    <div id="contactTableResult"></div>
+    <div id="deleteContactResult"></div>
 </div>
-
 </body>
 </html>
