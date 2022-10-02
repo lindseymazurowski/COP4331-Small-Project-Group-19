@@ -34,7 +34,7 @@
 		}
 
 		$stmt->close();
-		$stmt2->clone();
+		$stmt2->close();
 		$conn->close();
 	}
 	

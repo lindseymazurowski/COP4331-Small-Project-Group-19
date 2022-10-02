@@ -14,24 +14,28 @@
 	{
 		$search = $inData["search"];
 		$userID = $inData["userID"];
-		$stmt = $conn->prepare("select * from contacts where (firstName like '%$search%' or lastName like '%$search%' or phone like '%$search%' or email like '%$search%') and (userID=$userID)");
+		$numItems = $inData["numItems"];
+		$offset = $inData["offset"];
+		$stmt = $conn->prepare("select * from contacts where (firstName like '%$search%' or lastName like '%$search%' or phone like '%$search%' or email like '%$search%') and (userID=$userID) limit ?,?");
+		$stmt->bind_param("ii", $offset, $numItems);
 		$stmt->execute();
+
 		$result = $stmt->get_result();
 		
 		while($row = $result->fetch_assoc())
 		{
+			$dateTime = date("Y-m-d H:i:s");
+			$stmt2 = $conn->prepare("UPDATE contacts SET dateLastAccessed=? WHERE ID=?");
+			$stmt2->bind_param("ss", $dateTime, $row['ID']);
+			$stmt2->execute();
+			$stmt2->close();
+
 			if( $searchCount > 0 )
 			{
 				$searchResults .= ",";
 			}
 			$searchCount++;
 			$searchResults .= json_encode($row);
-
-			$dateTime = date("Y-m-d H:i:s");
-			$stmt2 = $conn->prepare("UPDATE contacts SET dateLastAccessed=? WHERE ID=?");
-			$stmt2->bind_param("ss", $dateTime, $row['ID']);
-			$stmt2->execute();
-			$stmt2->close();
 		}
 		
 		if( $searchCount == 0 )
